@@ -4,9 +4,16 @@ import router from "./routes/index.js";
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-
-app.use('/api', router)
-
+const key = "3000";
+app.use("/", (req, res, next) => {
+  // console.log(req.query.apiKey)
+  if (req.query.apiKey === key) {
+    next();
+  } else {
+    res.status(401).send({ error: "Invalid API Key" });
+  }
+});
+app.use("/api", router);
 app.use(express.json()); //middleware to parse json
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
