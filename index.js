@@ -1,18 +1,26 @@
 console.log("hello world");
 import express from "express";
 import router from "./routes/index.js";
+import mongoose from "./db/index.js";
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-const key = "3000";
-app.use("/", (req, res, next) => {
-  // console.log(req.query.apiKey)
-  if (req.query.apiKey === key) {
-    next();
-  } else {
-    res.status(401).send({ error: "Invalid API Key" });
-  }
-});
+const PORT = process.env.PORT || 8000;
+
+const db = mongoose.connection;
+db.on("error" ,console.error.bind("connection error"));
+db.once("open",function(){
+  console.log("connected to the database")
+})
+
+// const key = "3000";
+// app.use("/", (req, res, next) => {
+//   // console.log(req.query.apiKey)
+//   if (req.query.apiKey === key) {
+//     next();
+//   } else {
+//     res.status(401).send({ error: "Invalid API Key" });
+//   }
+// });
 app.use("/api", router);
 app.use(express.json()); //middleware to parse json
 app.listen(PORT, () => {
