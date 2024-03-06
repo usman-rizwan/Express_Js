@@ -3,20 +3,20 @@ const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
     name: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
     },
     email: {
-        type: String,
+        type: Schema.Types.String,
         unique: true, //email should be unique for every user.
         required: true,
     },
     phoneNumber: {
-        type: Number,
+        type: Schema.Types.Number,
         required: true,
     },
     password: {
-        type: String,
+        type: Schema.Types.String,
         required: true,
     },
 });

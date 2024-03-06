@@ -1,4 +1,3 @@
-console.log("hello world");
 import express from "express";
 import router from "./routes/index.js";
 import mongoose from "./db/index.js";
@@ -12,6 +11,11 @@ db.once("open",function(){
   console.log("connected to the database")
 })
 
+app.use("/api", router);
+app.use(express.json()); //middleware to parse json
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 // const key = "3000";
 // app.use("/", (req, res, next) => {
 //   // console.log(req.query.apiKey)
@@ -21,11 +25,6 @@ db.once("open",function(){
 //     res.status(401).send({ error: "Invalid API Key" });
 //   }
 // });
-app.use("/api", router);
-app.use(express.json()); //middleware to parse json
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
 
 // app.get("/", (req, res) => {
 //   res.send("Hello World");
