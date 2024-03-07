@@ -1,18 +1,22 @@
 import express from "express";
 import router from "./routes/index.js";
 import mongoose from "./db/index.js";
+
 const app = express();
 
 const PORT = process.env.PORT || 8000;
 
 const db = mongoose.connection;
-db.on("error" ,console.error.bind("connection error"));
-db.once("open",function(){
-  console.log("connected to the database")
-})
+db.on("error", console.error.bind("connection error"));
+db.once("open", function () {
+  console.log("Connected to the database");
+});
 
 app.use("/api", router);
 app.use(express.json()); //middleware to parse json
+app.get("/health", (req, res) => {
+  res.json({ status: "OK" });
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
