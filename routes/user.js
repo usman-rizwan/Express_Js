@@ -4,8 +4,8 @@ import bodyParser from "body-parser";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import Joi from "joi";
-import chalk from 'chalk';
-
+import 'dotenv/config.js'
+import verifyToken from "../middleware/verifyToken.js";
 const router = express.Router();
 
 const schema = Joi.object({
@@ -45,7 +45,7 @@ router.post("/", async (req, res) => {
     const password = await bcrypt.hash(req.body.password, saltRounds);
     const user = new User({ ...req.body, password });
     const newUser = await user.save();
-    const token = jwt.sign({ _id: newUser._id }, "practicehaisab");
+    const token = jwt.sign({ _id: newUser._id }, process.env.SECRET);
 
     return res.status(200).send({
       status: 200,
@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
       return res.status(403).send({ message: "Incorrect password" });
     }
     delete user.password;
-    const token = jwt.sign({ _id: user._id }, "practicehaisab");
+    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
     return res
       .status(200)
       .send({ message: "User found successfully", user, token });
@@ -86,10 +86,10 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.get("/get", async (req, res) => {
+router.get("/get", verifyToken,  async (req, res) => {
   try {
-    const user =await User.find()
-    return res.status(200).send({user })
+    const user =await User.find({}, "-__v -password");
+    return res.status(200).send({user : user });
   } catch (error) {
     return res.status(500).send({ status: 500, message: error.message });
   }
