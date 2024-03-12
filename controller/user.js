@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import Joi from "joi";
 import 'dotenv/config.js'
 import verifyToken from "../middleware/verifyToken.js";
+import { getAllUsers } from "../services/user.js";
 const router = express.Router();
 
 const schema = Joi.object({
@@ -86,10 +87,10 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.get("/get", verifyToken,  async (req, res) => {
+router.get("/get",  async (req, res) => {
   try {
-    const user =await User.find({}, "-__v -password");
-    return res.status(200).send({user : user });
+    const user = await getAllUsers();
+    return res.status(200).send({user });
   } catch (error) {
     return res.status(500).send({ status: 500, message: error.message });
   }
