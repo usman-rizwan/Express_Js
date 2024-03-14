@@ -1,8 +1,9 @@
 import express from "express";
 import router from "./routes/index.js";
 import mongoose from "./db/index.js";
-import chalk from 'chalk';
-
+import chalk from "chalk";
+import { createServer } from "http";
+import { Server } from "socket.io";
 const app = express();
 
 const PORT = process.env.PORT || 8000;
@@ -15,10 +16,20 @@ db.once("open", function () {
 
 app.use("/api", router);
 app.use(express.json()); //middleware to parse json
+
 app.get("/health", (req, res) => {
   res.json({ status: "OK" });
 });
-app.listen(PORT, () => {
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: "*" });
+
+io.on('connection' , (socket)=>{
+  console.log(chalk.bgCyan("Made socket connection"));
+})
+
+
+httpServer.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 // const key = "3000";
